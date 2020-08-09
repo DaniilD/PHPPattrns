@@ -3,6 +3,9 @@
 use Patterns\Generating\Abstract_Factory\Factory\PHPTemplateFactory;
 use Patterns\Generating\Abstract_Factory\Factory\TwigTemplateFactory;
 use Patterns\Generating\Abstract_Factory\Page;
+use Patterns\Generating\Builder\MysqlQueryBuilder;
+use Patterns\Generating\Builder\PostgresQueryBuilder;
+use Patterns\Generating\Builder\SQLQueryBuilder;
 
 error_reporting(E_ALL); //задает какие ошибки попадут в отчет. E_ALL - все ошибки
 ini_set('display_errors', 'on'); // разрешает отображение ошибок
@@ -18,6 +21,30 @@ spl_autoload_register(function ($class){
     }
 });
 
-$page = new Page("Simple page", "this it the body");
+
+//Abstract Factory Client Code
+/*$page = new Page("Simple page", "this it the body");
 echo "Testing actual rendering with the PHPTemplate factory:\n";
-echo $page->render(new TwigTemplateFactory());
+echo $page->render(new TwigTemplateFactory());*/
+
+
+//Builder Client Code
+function clientCode(SQLQueryBuilder $queryBuilder){
+    $query = $queryBuilder
+        ->select("user", ["name", "email", "password"])
+        ->where("age", 18, ">")
+        ->where("age", 30,"<")
+        ->limit(10, 20)
+        ->getSQL();
+    
+
+    echo $query;
+}
+
+echo "Testing MySQL query builder:\n";
+clientCode(new MysqlQueryBuilder);
+
+echo "\n\n";
+
+echo "Testing PostgresSQL query builder:\n";
+clientCode(new PostgresQueryBuilder);
